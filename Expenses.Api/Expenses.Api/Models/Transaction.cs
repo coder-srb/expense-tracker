@@ -1,6 +1,6 @@
-﻿using Expenses.Api.Controllers.Models.Base;
+﻿using Expenses.Api.Models.Base;
 
-namespace Expenses.Api.Controllers.Models
+namespace Expenses.Api.Models
 {
     public class Transaction:BaseEntity
     {

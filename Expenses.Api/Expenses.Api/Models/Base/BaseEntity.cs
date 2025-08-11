@@ -1,4 +1,4 @@
-﻿namespace Expenses.Api.Controllers.Models.Base
+﻿namespace Expenses.Api.Models.Base
 {
     public class BaseEntity // Base class for entities(User & Transaction) in the application
     {
