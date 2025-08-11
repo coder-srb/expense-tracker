@@ -1,6 +1,11 @@
+using Expenses.Api.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("myConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Configure Entity Framework
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
