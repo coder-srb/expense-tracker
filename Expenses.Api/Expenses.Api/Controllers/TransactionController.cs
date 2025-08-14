@@ -1,7 +1,7 @@
 ﻿using Expenses.Api.Data;
 using Expenses.Api.Data.Services;
 using Expenses.Api.Dtos;
-using Expenses.Api.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +9,7 @@ namespace Expenses.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAll")]
     public class TransactionController(ITransactionsService transactionsService): ControllerBase
     {
 
@@ -53,7 +54,7 @@ namespace Expenses.Api.Controllers
             return Ok(updatedTransaction);
         }
 
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public IActionResult Delete(int id)
         {
             bool success = transactionsService.Delete(id);

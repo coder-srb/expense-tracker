@@ -5,6 +5,16 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Configured Cors
+builder.Services.AddCors(opt => opt.AddPolicy("AllowAll",
+    opt => opt.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin())
+);
+
+
+// Configured EntityFrameworkCore
 var connectionString = builder.Configuration.GetConnectionString("myConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Configure Entity Framework
 
@@ -23,6 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();   // serves the generated Swagger as a JSON endpoint
     app.UseSwaggerUI(); // serves the Swagger UI for interactive API documentation
 }
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

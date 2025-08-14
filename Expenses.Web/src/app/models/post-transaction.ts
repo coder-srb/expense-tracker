@@ -6,4 +6,7 @@ export interface PostTransaction
     type: string;
     amount: number;
     category: string;
+    createdAt: Date;
 }
+
+// even if we don't create this interface in the frontend, backend will automatically map the properties of PostTransactionDto to the properties of Transaction class
