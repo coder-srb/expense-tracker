@@ -1,6 +1,7 @@
 ﻿using Expenses.Api.Data;
 using Expenses.Api.Data.Services;
 using Expenses.Api.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ namespace Expenses.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAll")]
+    [Authorize]
     public class TransactionController(ITransactionsService transactionsService): ControllerBase
     {
 
