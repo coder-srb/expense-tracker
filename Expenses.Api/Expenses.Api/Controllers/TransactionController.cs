@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Expenses.Api.Controllers
 {
@@ -18,7 +19,19 @@ namespace Expenses.Api.Controllers
         [HttpGet("All")]
         public IActionResult Get()
         {
-            var transactions = transactionsService.GetAll();
+            var nameIdentifierClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(nameIdentifierClaim))
+            {
+                return BadRequest("Could not get User ID");
+            }
+
+            if (!int.TryParse(nameIdentifierClaim, out var userId))
+            {
+                return BadRequest();
+            }
+
+            var transactions = transactionsService.GetAll(userId);
             return Ok(transactions);
         }
 
@@ -39,7 +52,19 @@ namespace Expenses.Api.Controllers
         [HttpPost("Create")]
         public IActionResult Create([FromBody] PostTransactionDto payload)
         {
-            var newTransaction = transactionsService.Add(payload);
+            var nameIdentifierClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(nameIdentifierClaim))
+            {
+                return BadRequest("Could not get User ID");
+            }
+
+            if (!int.TryParse(nameIdentifierClaim, out var userId))
+            {
+                return BadRequest();
+            }
+
+            var newTransaction = transactionsService.Add(payload, userId);
             return Ok(newTransaction);
         }
 
