@@ -1,6 +1,11 @@
 using Expenses.Api.Data;
 using Expenses.Api.Data.Services;
+using Expenses.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,24 @@ builder.Services.AddCors(opt => opt.AddPolicy("AllowAll",
             .AllowAnyOrigin())
 );
 
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = "srb.net",     //builder.Configuration["Jwt:Issuer"],
+            ValidAudience = "srb.net",    //builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-very-secure-secret-key-32-chars-long"))   // builder.Configuration["Jwt:Key"]
+        };
+    });
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>(); // For password hashing
 
 // Configured EntityFrameworkCore
 var connectionString = builder.Configuration.GetConnectionString("myConnection");
@@ -37,6 +60,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); 
 
 app.UseAuthorization();
 
