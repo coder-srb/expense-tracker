@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../models/authresponse';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 
@@ -11,13 +11,22 @@ import { Router } from '@angular/router';
 export class AuthService {
   public apiUrl = 'https://localhost:7033/api/Auth';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  private currentUserSubject = new BehaviorSubject<string | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router) { 
+    const token = localStorage.getItem('token');
+    if(token){
+      this.currentUserSubject.next('user');
+    }
+  }
 
   login(credentials: User) : Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/Login`, credentials)
           .pipe(
             tap((response) => {
               localStorage.setItem('token',response.token);
+              this.currentUserSubject.next('user');
             })
           )
   }
@@ -28,6 +37,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
