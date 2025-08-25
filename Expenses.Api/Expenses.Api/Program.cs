@@ -40,7 +40,14 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>(); // Fo
 
 // Configured EntityFrameworkCore
 var connectionString = builder.Configuration.GetConnectionString("myConnection");
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Configure Entity Framework
+//builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Configure Entity Framework
+var serverVersionString = builder.Configuration.GetValue<string>("MySQL:ServerVersion");
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseMySql(
+        connectionString,
+        new MySqlServerVersion(Version.Parse(serverVersionString))   // or we can directly add in program.cs ---> "new MySqlServerVersion(new Version(x, y, zz))"
+    )
+);
 
 // AddScoped | AddSingleton | AddTransient
 builder.Services.AddScoped<ITransactionsService, TransactionsService>(); 
